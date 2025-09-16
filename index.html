@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infiner - AI Website Builder</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    :root {
+      --primary-color: #6a0dad;
+      --secondary-color: #4b0082;
+      --text-color: #333;
+      --light-bg: #f4f4f9;
+      --card-bg: #fff;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+
+    body { line-height:1.6; color:var(--text-color); background-color:var(--light-bg); overflow-x:hidden; }
+
+    /* Top Navigation Bar */
+    .top-bar {
+      position: fixed; top:0; left:0; width:100%; background-color:var(--primary-color);
+      color:#fff; z-index:999; box-shadow:0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .top-bar-container {
+      max-width:1200px; margin:0 auto; padding:0.75rem 2rem; display:flex; align-items:center; justify-content:space-between;
+    }
+
+    .logo-placeholder img { height:40px; }
+
+    .top-nav a { color:#fff; margin-left:2rem; text-decoration:none; font-weight:600; transition:color 0.3s ease; }
+    .top-nav a:hover { color:#f4f4f9; }
+
+    html { scroll-behavior:smooth; }
+
+    /* Hero Section */
+    .hero-section {
+      background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));
+      color:#fff; text-align:center; padding:10rem 2rem 8rem; min-height:100vh; display:flex; align-items:center; justify-content:center; flex-direction:column;
+    }
+
+    .hero-content { max-width:900px; }
+    .hero-headline { font-size:clamp(2rem,5vw,4.5rem); font-weight:700; margin-bottom:1rem; letter-spacing:-1px; text-shadow:2px 2px 4px rgba(0,0,0,0.2); }
+    .hero-subheadline { font-size:clamp(1rem,2.5vw,1.5rem); font-weight:400; margin-bottom:2.5rem; opacity:0.8; }
+    .dynamic-prompt-container { font-size:clamp(1.2rem,3vw,2rem); font-weight:600; margin-bottom:2.5rem; min-height:3rem; text-shadow:1px 1px 2px rgba(0,0,0,0.1); }
+    .changing-text { border-bottom:3px solid #fff; padding-bottom:3px; opacity:0; transition:opacity 0.5s ease-in-out; animation:pulse-border 1.5s infinite; }
+    @keyframes pulse-border { 0%{border-color:#fff}50%{border-color:transparent}100%{border-color:#fff} }
+
+    .cta-button { display:inline-block; background-color:#fff; color:var(--primary-color); padding:1rem 2.5rem; font-size:1.25rem; font-weight:600; border-radius:50px; text-decoration:none; transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
+    .cta-button:hover { transform:translateY(-5px) scale(1.05); box-shadow:0 10px 20px rgba(0,0,0,0.3); }
+
+    section { padding:5rem 2rem; text-align:center; }
+    h2 { font-size:clamp(2rem,4vw,3rem); font-weight:700; margin-bottom:1rem; color:var(--secondary-color); }
+    p { max-width:700px; margin:0 auto 2rem; }
+    .fade-in { opacity:0; transform:translateY(20px); transition:opacity 0.8s ease-out, transform 0.8s ease-out; }
+    .fade-in.is-visible { opacity:1; transform:translateY(0); }
+
+    /* How It Works */
+    .how-it-works .steps-container { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:2rem; margin-top:3rem; }
+    .how-it-works .step { background:var(--card-bg); padding:2.5rem; border-radius:15px; box-shadow:0 4px 20px rgba(0,0,0,0.05); text-align:left; transition: transform 0.3s ease; }
+    .how-it-works .step:hover { transform:translateY(-10px); }
+    .how-it-works .step h3 { font-size:1.5rem; color:var(--primary-color); margin-bottom:0.5rem; }
+
+    /* Showcase */
+    .showcase-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; margin-top:3rem; }
+    .showcase-item { position:relative; overflow:hidden; border-radius:15px; box-shadow:0 4px 20px rgba(0,0,0,0.1); transition: transform 0.3s ease; }
+    .showcase-item:hover { transform:scale(1.05); }
+    .showcase-item img { width:100%; display:block; transition: transform 0.5s ease; }
+    .showcase-item:hover img { transform:scale(1.1); }
+    .showcase-item .overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); color:#fff; display:flex; align-items:center; justify-content:center; opacity:0; transition:opacity 0.3s ease; cursor:pointer; }
+    .showcase-item:hover .overlay { opacity:1; }
+    .overlay p { font-size:1.25rem; font-weight:600; text-align:center; }
+
+    /* FAQ */
+    .faq-section { background:var(--card-bg); }
+    .faq-container { max-width:900px; margin:3rem auto 0; text-align:left; }
+    .faq-item { border-bottom:1px solid #ccc; padding:1.5rem 0; }
+    .faq-question { font-size:1.25rem; font-weight:600; color:var(--primary-color); cursor:pointer; position:relative; padding-right:2rem; }
+    .faq-question::after { content:'+'; position:absolute; right:0; font-size:1.5rem; line-height:1; transition: transform 0.3s ease; }
+    .faq-question.active::after { transform:rotate(45deg); }
+    .faq-answer { max-height:0; overflow:hidden; transition:max-height 0.5s ease-out; padding-top:0.5rem; color:#555; }
+
+    /* Final CTA */
+    .final-cta { background:var(--light-bg); padding:5rem 2rem; }
+    .final-cta .cta-button { background-color:var(--primary-color); color:#fff; margin-top:1rem; }
+    .final-cta h2 { color:var(--text-color); }
+
+    /* Footer */
+    footer { background-color:var(--secondary-color); color:#fff; padding:3rem 2rem; text-align:center; }
+    .footer-content { display:flex; flex-direction:column; align-items:center; }
+    .social-links { display:flex; justify-content:center; flex-wrap:wrap; gap:1rem; margin-top:1rem; }
+    .social-links img { height:40px; width:40px; object-fit:contain; transition: transform 0.3s ease; }
+    .social-links a:hover img { transform:scale(1.2); }
+  </style>
+  <script src="https://kit.fontawesome.com/6f4d9a4e3b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<!-- Top Navigation Bar -->
+<header class="top-bar">
+  <div class="top-bar-container">
+    <div class="logo-placeholder"><img src="https://via.placeholder.com/120x40?text=Logo" alt="Logo"></div>
+    <nav class="top-nav">
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+      <a href="#showcase">Showcase</a>
+      <a href="#final-cta">Get Started</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="hero-content">
+    <h1 class="hero-headline">Build Your Website in Seconds, Not Months.</h1>
+    <p class="hero-subheadline">Infiner: the only AI website builder that understands your vision. Just tell us what you need, and watch it come to life.</p>
+    <div class="dynamic-prompt-container">
+      <span class="prompt-text">Build a website for... </span>
+      <span class="changing-text" id="changing-text"></span>
+    </div>
+    <a href="#final-cta" class="cta-button">Start Building Free</a>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+  <h2 class="fade-in">How It Works</h2>
+  <div class="steps-container">
+    <div class="step fade-in">
+      <h3>1. Describe Your Vision</h3>
+      <p>Start by typing a simple prompt. We'll handle the rest. It's as easy as a few words.</p>
+    </div>
+    <div class="step fade-in">
+      <h3>2. AI Designs & Builds</h3>
+      <p>Infiner AI analyzes your prompt and generates a stunning, fully-functional website in real-time.</p>
+    </div>
+    <div class="step fade-in">
+      <h3>3. Customize & Launch</h3>
+      <p>Easily fine-tune colors, fonts, and content with our intuitive editor, then go live with a single click.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Showcase Section -->
+<section id="showcase" class="showcase">
+  <h2 class="fade-in">See What Infiner Can Create</h2>
+  <div class="showcase-grid">
+    <div class="showcase-item fade-in">
+      <img src="https://images.unsplash.com/photo-1542435503-956c469947f6?auto=format&fit=crop&q=80&w=2574" alt="Example Website 1">
+      <div class="overlay"><p>Built for a design agency</p></div>
+    </div>
+    <div class="showcase-item fade-in">
+      <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=2600" alt="Example Website 2">
+      <div class="overlay"><p>Portfolio site for a creator</p></div>
+    </div>
+    <div class="showcase-item fade-in">
+      <img src="https://ourcodeworld.com/public-media/gallery/gallery-599fe01f68bd9.jpg" alt="Example Website 3">
+      <div class="overlay"><p>Innovative design for sustainable brands</p></div>
+    </div>
+    <div class="showcase-item fade-in">
+      <img src="https://www.optimonk.com/wp-content/uploads/flipkart.png" alt="Example Website 4">
+      <div class="overlay"><p>Capture your passion, effortlessly</p></div>
+    </div>
+    <div class="showcase-item fade-in">
+      <img src="https://images-platform.99static.com//tjPe2SEhhpRhj00T-Bw38ibkAbA=/0x0:1600x1600/fit-in/500x500/99designs-contests-attachments/65/65963/attachment_65963979" alt="Example Website 5">
+      <div class="overlay"><p>Modern ecommerce demo</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Placeholder Section -->
+<section id="pricing">
+  <h2 class="fade-in">Pricing</h2>
+  <p class="fade-in">Coming soon...</p>
+</section>
+
+<!-- FAQ Section -->
+<section id="faq" class="faq-section">
+  <h2 class="fade-in">Frequently Asked Questions</h2>
+  <div class="faq-container">
+    <div class="faq-item fade-in">
+      <div class="faq-question">Do I need any coding knowledge to use Infiner?</div>
+      <div class="faq-answer">Absolutely not! Infiner handles all the code. You just describe what you want.</div>
+    </div>
+    <div class="faq-item fade-in">
+      <div class="faq-question">Can I customize the website after the AI builds it?</div>
+      <div class="faq-answer">Yes, definitely! Our intuitive editor allows you to easily change text, images, colors, and layout to perfectly match your brand.</div>
+    </div>
+    <div class="faq-item fade-in">
+      <div class="faq-question">Is my website mobile-friendly?</div>
+      <div class="faq-answer">Every website built with Infiner is automatically optimized for all devices – desktops, tablets, and smartphones.</div>
+    </div>
+    <div class="faq-item fade-in">
+      <div class="faq-question">What about SEO? Will my site be found on Google?</div>
+      <div class="faq-answer">Infiner includes built-in SEO best practices to help search engines discover your site.</div>
+    </div>
+    <div class="faq-item fade-in">
+      <div class="faq-question">Do you offer a free plan or trial?</div>
+      <div class="faq-answer">Yes, you can start building your website for free with Infiner’s generous free plan! No credit card required to begin.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section id="final-cta" class="final-cta">
+  <div class="cta-content">
+    <h2 class="fade-in">Stop dreaming, start building.</h2>
+    <p class="fade-in">Join thousands of creators launching their websites with Infiner.</p>
+    <a href="#" class="cta-button">Get Started Free</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-content">
+    <p>&copy; 2025 Infiner. All rights reserved.</p>
+    <div class="social-links">
+      <a href="https://twitter.com/" target="_blank"><img src="https://logos-world.net/wp-content/uploads/2020/04/Twitter-Emblem.png" alt="Twitter"></a>
+      <a href="https://www.youtube.com/" target="_blank"><img src="https://upload.wikimedia.org/wikipedia/commons/e/ef/Youtube_logo.png" alt="YouTube"></a>
+      <a href="https://www.instagram.com/" target="_blank"><img src="https://img.freepik.com/premium-psd/instagram-logo_971166-164497.jpg?semt=ais_incoming&w=740&q=80" alt="Instagram"></a>
+      <a href="https://www.facebook.com/" target="_blank"><img src="https://img.freepik.com/premium-psd/facebook-logo-blue-circle_705838-12823.jpg?semt=ais_incoming&w=740&q=80" alt="Facebook"></a>
+      <a href="https://www.snapchat.com/" target="_blank"><img src="https://img.freepik.com/premium-photo/square-snapchat-logo-isolated-white-background_469489-1032.jpg?semt=ais_incoming&w=740&q=80" alt="Snapchat"></a>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script>
+  const changingText = document.getElementById('changing-text');
+  const prompts = ["a bakery","a personal blog","a gym website","your new app","an e-commerce store"];
+  let promptIndex = 0;
+  let charIndex = 0;
+  let isDeleting = false;
+
+  function typePrompt() {
+    const currentPrompt = prompts[promptIndex];
+    if(isDeleting){
+      changingText.textContent = currentPrompt.substring(0, charIndex--);
+    } else {
+      changingText.textContent = currentPrompt.substring(0, charIndex++);
+    }
+    if(!isDeleting && charIndex > currentPrompt.length){
+      setTimeout(()=>isDeleting=true,1500);
+    } else if(isDeleting && charIndex<0){
+      isDeleting=false;
+      promptIndex = (promptIndex+1) % prompts.length;
+    }
+    const typingSpeed = isDeleting ? 75 : 150;
+    setTimeout(typePrompt, typingSpeed);
+  }
+  changingText.style.opacity = 1;
+  typePrompt();
+
+  const fadeInElements = document.querySelectorAll('.fade-in');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  fadeInElements.forEach(el => observer.observe(el));
+
+  const faqQuestions = document.querySelectorAll('.faq-question');
+  faqQuestions.forEach(q => {
+    q.addEventListener('click',()=>{
+      const answer = q.nextElementSibling;
+      const active = q.classList.contains('active');
+      document.querySelectorAll('.faq-question').forEach(q2=>{q2.classList.remove('active');q2.nextElementSibling.style.maxHeight=null;});
+      if(!active){
+        q.classList.add('active');
+        answer.style.maxHeight = answer.scrollHeight+'px';
+      }
+    });
+  });
+</script>
+</body>
+</html>
