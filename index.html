@@ -105,6 +105,15 @@
 
     /* Adjust top section spacing */
     body { padding-top:80px; } /* avoid content under fixed navbar */
+
+    /* Modals */
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000; }
+    .modal-content { background:#fff; padding:2rem; border-radius:10px; max-width:400px; width:90%; }
+    .modal-content input { width:100%; margin-bottom:1rem; padding:0.5rem; }
+    .modal-content button { width:100%; padding:0.75rem; border:none; border-radius:5px; margin-bottom:0.5rem; cursor:pointer; }
+    .modal-content .primary { background:var(--primary-color); color:#fff; }
+    .modal-content .secondary { background:#ccc; }
+    .modal-error { color:red; margin-top:0.5rem; }
   </style>
   <script src="https://kit.fontawesome.com/6f4d9a4e3b.js" crossorigin="anonymous"></script>
 </head>
@@ -244,6 +253,30 @@
   </div>
 </footer>
 
+<!-- Sign In Modal -->
+<div id="signin-modal" class="modal">
+  <div class="modal-content">
+    <h2>Sign In</h2>
+    <input id="signin-username" placeholder="Username">
+    <input id="signin-password" type="password" placeholder="Password">
+    <button class="primary" onclick="signin()">Sign In</button>
+    <button class="secondary" onclick="closeModal('signin-modal')">Cancel</button>
+    <div id="signin-error" class="modal-error"></div>
+  </div>
+</div>
+
+<!-- Sign Up Modal -->
+<div id="signup-modal" class="modal">
+  <div class="modal-content">
+    <h2>Sign Up</h2>
+    <input id="signup-username" placeholder="Username">
+    <input id="signup-password" type="password" placeholder="Password">
+    <button class="primary" onclick="signup()">Sign Up</button>
+    <button class="secondary" onclick="closeModal('signup-modal')">Cancel</button>
+    <div id="signup-error" class="modal-error"></div>
+  </div>
+</div>
+
 <!-- Scripts -->
 <script>
 const changingText = document.getElementById('changing-text');
@@ -266,6 +299,49 @@ fadeInElements.forEach(el=>observer.observe(el));
 
 const faqQuestions=document.querySelectorAll('.faq-question');
 faqQuestions.forEach(q=>{ q.addEventListener('click',()=>{ const answer=q.nextElementSibling; const active=q.classList.contains('active'); document.querySelectorAll('.faq-question').forEach(q2=>{ q2.classList.remove('active'); q2.nextElementSibling.style.maxHeight=null;}); if(!active){ q.classList.add('active'); answer.style.maxHeight=answer.scrollHeight+'px'; } }); });
+
+// Modal open/close
+document.querySelector('.sign-in').addEventListener('click', () => openModal('signin-modal'));
+document.querySelector('.sign-up').addEventListener('click', () => openModal('signup-modal'));
+function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+// Auth
+const API_URL = "https://YOUR-VERCEL-BACKEND.vercel.app/api"; // replace with your backend URL
+
+async function signup() {
+  const username = document.getElementById('signup-username').value;
+  const password = document.getElementById('signup-password').value;
+  try {
+    const res = await fetch(`${API_URL}/signup`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(res.ok) { alert("Registered! Please sign in."); closeModal('signup-modal'); }
+    else document.getElementById('signup-error').textContent = data.message;
+  } catch(e) { document.getElementById('signup-error').textContent = "Error connecting to server"; }
+}
+
+async function signin() {
+  const username = document.getElementById('signin-username').value;
+  const password = document.getElementById('signin-password').value;
+  try {
+    const res = await fetch(`${API_URL}/signin`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({username,password})
+    });
+    const data = await res.json();
+    if(res.ok) { 
+      localStorage.setItem('token', data.token); 
+      alert("Signed in successfully!"); 
+      closeModal('signin-modal'); 
+    }
+    else document.getElementById('signin-error').textContent = data.message;
+  } catch(e) { document.getElementById('signin-error').textContent = "Error connecting to server"; }
+}
 </script>
 </body>
 </html>
